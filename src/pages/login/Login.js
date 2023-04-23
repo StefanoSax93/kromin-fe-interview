@@ -54,7 +54,7 @@ const useStyles = createUseStyles(theme => ({
     errorMessage: {
         position: 'absolute',
         top: 20,
-        right: 20,
+        right: 40,
     },
 }))
 
@@ -62,7 +62,6 @@ const Login = () => {
     const showError = useError()
     const { createUser } = useUser()
     const [showPassword, setShowPassword] = useState(false)
-    const [showErrorMessage, setShowErrorMessage] = useState(false)
     const [errorArray, setErrorArray] = useState([])
 
     const methods = useForm({
@@ -94,30 +93,29 @@ const Login = () => {
 
             gsap.fromTo(
                 `.${classes.errorMessage}`,
-                { opacity: 0, x: 100 },
+                { opacity: 0, x: 35 },
                 { opacity: 1, x: 0, duration: 0.5 }
             )
+            gsap.to(`.${classes.errorMessage}`, {
+                opacity: 0,
+                x: 35,
+                delay: 2.8,
+                display: 'none',
+                duration: 0.5,
+            })
 
-            setErrorArray([...errorArray, 'User not registered'])
+            setErrorArray([...errorArray, 'Wrong email or password'])
         }
     }
 
     useEffect(() => {
-        gsap.to(`.${classes.errorMessage}`, {
-            opacity: 0,
-            x: 100,
-            delay: 3,
-            duration: 0.5,
-        })
-        const intervalId = setInterval(() => {
+        const intervalId = setTimeout(() => {
             if (errorArray.length > 0) {
                 setErrorArray(prevMessages => prevMessages.slice(1))
-            } else {
-                setErrorArray([])
             }
         }, 3000)
 
-        return () => clearInterval(intervalId)
+        return () => clearTimeout(intervalId)
     }, [errorArray])
 
     const classes = useStyles()
@@ -173,7 +171,7 @@ const Login = () => {
                 </form>
             </FormProvider>
             {errorArray.length > 0 &&
-                errorArray.map((_, index) => (
+                errorArray.map((message, index) => (
                     <div
                         className={classes.errorMessage}
                         style={{ zIndex: 100 - index }}
@@ -181,9 +179,21 @@ const Login = () => {
                         <Toast
                             key={index}
                             color="#D65459"
-                            closeModal={() =>
-                                setErrorArray(errorArray.slice(1))
-                            }
+                            closeModal={() => {
+                                gsap.to(`.${classes.errorMessage}`, {
+                                    opacity: 0,
+                                    x: 35,
+                                    display: 'none',
+                                    duration: 0.5,
+                                })
+                                setTimeout(
+                                    () =>
+                                        setErrorArray(prevMessages =>
+                                            prevMessages.slice(1)
+                                        ),
+                                    500
+                                )
+                            }}
                         >
                             <div
                                 style={{
@@ -192,8 +202,7 @@ const Login = () => {
                                     gap: 10,
                                 }}
                             >
-                                <FaRegSadCry />{' '}
-                                <span>Wrong email or password</span>
+                                <FaRegSadCry /> <div>{message}</div>
                             </div>
                         </Toast>
                     </div>

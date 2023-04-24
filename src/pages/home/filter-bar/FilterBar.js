@@ -1,11 +1,11 @@
-import {createUseStyles} from "react-jss";
-import SearchBar from "../../../components/SearchBar";
-import FilterButton from "../../../components/FilterButton";
-import {useNavigate} from "react-router-dom";
-import {ROUTE_COMPLETED} from "../../../utilities/constants";
-import ControlledSelect from "../../../components/ControlledSelect";
-import DatePickerInput from "../../../components/DatePickerInput";
-import {TASK_PRIORITIES} from "../../../models/task";
+import { createUseStyles } from 'react-jss'
+import SearchBar from '../../../components/SearchBar'
+import FilterButton from '../../../components/FilterButton'
+import { useNavigate } from 'react-router-dom'
+import { ROUTE_COMPLETED } from '../../../utilities/constants'
+import ControlledSelect from '../../../components/ControlledSelect'
+import DatePickerInput from '../../../components/DatePickerInput'
+import { TASK_PRIORITIES } from '../../../models/task'
 
 const useStyles = createUseStyles(theme => ({
     filterBar: {
@@ -22,7 +22,7 @@ const useStyles = createUseStyles(theme => ({
             flexDirection: 'row',
             padding: '16px 56px',
             gap: 80,
-        }
+        },
     },
     actions: {
         height: '100%',
@@ -34,20 +34,20 @@ const useStyles = createUseStyles(theme => ({
         [theme.mediaQueries.lUp]: {
             gap: 16,
             justifyContent: 'end',
-        }
+        },
     },
     search: {
         display: 'none',
         [theme.mediaQueries.lUp]: {
-            display: 'block'
-        }
+            display: 'block',
+        },
     },
     searchMobile: {
         display: 'block',
         width: '100%',
         [theme.mediaQueries.lUp]: {
-            display: 'none'
-        }
+            display: 'none',
+        },
     },
     searchBar: {
         minWidth: 280,
@@ -58,44 +58,60 @@ const useStyles = createUseStyles(theme => ({
             paddingBottom: 8,
             backgroundColor: `#ECEEF0`,
             '& :placeholder': {
-                color: theme.palette.secondary.main
-            }
+                color: theme.palette.secondary.main,
+            },
         },
         [theme.mediaQueries.lUp]: {
             minWidth: 332,
-        }
-    }
+        },
+    },
 }))
 
-const FilterBar = ({onPriorityHandler = Function.prototype, onSearchHandler = Function.prototype, dateFilter, onDateChangeHandler = Function.prototype}) => {
+const FilterBar = ({
+    onPriorityHandler = Function.prototype,
+    onSearchHandler = Function.prototype,
+    dateFilter,
+    onDateChangeHandler = Function.prototype,
+    route,
+    routeName,
+}) => {
+    const navigate = useNavigate()
+    const classes = useStyles()
 
-    const navigate = useNavigate();
-    const classes = useStyles();
-
-    return <div className={classes.filterBar}>
-        <div className={classes.actions}>
-            <DatePickerInput
-                value={dateFilter}
-                selectRange
-                callback={onDateChangeHandler}
-            />
-            <ControlledSelect
-                onChangeCallback={onPriorityHandler}
-                onClear={() => onPriorityHandler(false)}
-                name={'effort'}
-                placeholder={'Effort'}
-                isClearable
-                options={TASK_PRIORITIES}
-            />
-            <FilterButton onClickCallback={() => navigate(ROUTE_COMPLETED) }>Completed</FilterButton>
+    return (
+        <div className={classes.filterBar}>
+            <div className={classes.actions}>
+                <DatePickerInput
+                    value={dateFilter}
+                    selectRange
+                    callback={onDateChangeHandler}
+                />
+                <ControlledSelect
+                    onChangeCallback={onPriorityHandler}
+                    onClear={() => onPriorityHandler(false)}
+                    name={'effort'}
+                    placeholder={'Effort'}
+                    isClearable
+                    options={TASK_PRIORITIES}
+                />
+                <FilterButton onClickCallback={() => navigate(route)}>
+                    {routeName}
+                </FilterButton>
+            </div>
+            <div className={classes.search}>
+                <SearchBar
+                    className={classes.searchBar}
+                    onSearchCallback={onSearchHandler}
+                />
+            </div>
+            <div className={classes.searchMobile}>
+                <SearchBar
+                    className={classes.searchBar}
+                    onSearchCallback={onSearchHandler}
+                />
+            </div>
         </div>
-        <div className={classes.search}>
-            <SearchBar className={classes.searchBar} onSearchCallback={onSearchHandler}/>
-        </div>
-        <div className={classes.searchMobile}>
-            <SearchBar className={classes.searchBar} onSearchCallback={onSearchHandler}/>
-        </div>
-    </div>
+    )
 }
 
-export default FilterBar;
+export default FilterBar

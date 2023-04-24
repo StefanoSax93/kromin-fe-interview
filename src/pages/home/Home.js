@@ -5,6 +5,7 @@ import Column from '../../components/Column'
 import TasksAPI from '../../http/task.http'
 import useError from '../../hooks/useError'
 import { useEffect, useMemo, useState } from 'react'
+import { ROUTE_COMPLETED } from '../../utilities/constants'
 import {
     dateIsInRange,
     dateRenderer,
@@ -30,8 +31,8 @@ import { SuccessIcon } from '../../theme/icons'
 const useStyles = createUseStyles(theme => ({
     taskBodyRoot: {
         paddingTop: 0,
-        height: `calc(${window.innerHeight}px - 184px)`,
-        overflow: 'scroll',
+        height: `calc(${window.innerHeight}px - 284px)`,
+        overflowY: 'scroll',
         paddingBottom: 40,
         [theme.mediaQueries.lUp]: {
             paddingBottom: 16,
@@ -303,6 +304,8 @@ const Homepage = () => {
                 onDateChangeHandler={setDateFilters}
                 dateFilter={dateFilter}
                 onPriorityHandler={setPriority}
+                route={ROUTE_COMPLETED}
+                routeName="Completed"
             />
             <HomeTableHeader />
             <Container className={classes.taskBodyRoot}>

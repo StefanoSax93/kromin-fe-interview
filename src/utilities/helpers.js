@@ -1,14 +1,14 @@
 import dayjs from 'dayjs'
-import isTomorrow from "dayjs/plugin/isTomorrow";
-import isToday from "dayjs/plugin/isToday";
-import isBetween from "dayjs/plugin/isBetween";
+import isTomorrow from 'dayjs/plugin/isTomorrow'
+import isToday from 'dayjs/plugin/isToday'
+import isBetween from 'dayjs/plugin/isBetween'
 
 export const handleApiError = ({
-                                   error,
-                                   handleGeneralError = console.log,
-                                   handleFormError = console.log,
-                               }) => {
-    const {response: {data} = {}} = error
+    error,
+    handleGeneralError = console.log,
+    handleFormError = console.log,
+}) => {
+    const { response: { data } = {} } = error
     Object.keys(data).forEach(errorFieldName => {
         const rawErrorValue = data[errorFieldName]
         if (errorFieldName === 'message') {
@@ -19,7 +19,7 @@ export const handleApiError = ({
             const message = Array.isArray(rawErrorValue)
                 ? rawErrorValue.join(' ')
                 : rawErrorValue
-            handleFormError(errorFieldName, {message})
+            handleFormError(errorFieldName, { message })
         }
     })
 }
@@ -30,82 +30,93 @@ export const saferun = (callback, params) => {
     }
 }
 
-export const isBeforeToday = (dateToCompare) => dayjs(new Date(dateToCompare)).isBefore(dayjs(new Date().toLocaleDateString("en-US"),"day"))
+export const isBeforeToday = dateToCompare =>
+    dayjs(new Date(dateToCompare)).isBefore(
+        dayjs(new Date().toLocaleDateString('en-US'), 'day')
+    )
 
-export const dateRenderer = (date) => {
+export const dateRenderer = date => {
     dayjs.extend(isTomorrow)
     dayjs.extend(isToday)
 
     if (dayjs(new Date(date)).isToday()) {
-        return "Today"
+        return 'Today'
     } else if (dayjs(new Date(date)).isTomorrow()) {
-        return "Tomorrow"
+        return 'Tomorrow'
     } else {
-        return date === "Expired" ? date : dayjs(date).format("DD-MM-YYYY")
+        return date === 'Expired' ? date : dayjs(date).format('DD-MM-YYYY')
     }
 }
 
-export const effortRenderer = (effort) => {
-    switch (effort){
+export const effortRenderer = effort => {
+    switch (effort) {
         case 1:
-            return "!"
+            return '!'
         case 2:
-            return "!!"
+            return '!!'
         case 3:
-            return "!!!"
+            return '!!!'
         default:
-            return ""
+            return ''
     }
 }
 
-export const groupByDate = (array) => {
+export const groupByDate = array => {
     return array.reduce(function (r, a) {
         //check for the expired ones
-        if(isBeforeToday(a.date)){
-            r["Expired"] = r["Expired"] || [];
-            r["Expired"].push(a);
-        }else{
-            r[a.date] = r[a.date] || [];
-            r[a.date].push(a);
+        if (isBeforeToday(a.date)) {
+            r['Expired'] = r['Expired'] || []
+            r['Expired'].push(a)
+        } else {
+            r[a.date] = r[a.date] || []
+            r[a.date].push(a)
         }
-        return r;
-    }, Object.create(null));
+        return r
+    }, Object.create(null))
 }
 
 export const reorderItems = (list, startIndex, endIndex) => {
-    const result = Array.from(list);
-    const [removed] = result.splice(startIndex, 1);
-    result.splice(endIndex, 0, removed);
+    const result = Array.from(list)
+    const [removed] = result.splice(startIndex, 1)
+    result.splice(endIndex, 0, removed)
 
-    return result;
-};
+    return result
+}
 
-export const moveItems = (source, destination, droppableSource, droppableDestination) => {
-    const sourceClone = Array.from(source);
-    const destClone = Array.from(destination);
-    const [removed] = sourceClone.splice(droppableSource.index, 1);
+export const moveItems = (
+    source,
+    destination,
+    droppableSource,
+    droppableDestination
+) => {
+    const sourceClone = Array.from(source)
+    const destClone = Array.from(destination)
+    const [removed] = sourceClone.splice(droppableSource.index, 1)
 
-    destClone.splice(droppableDestination.index, 0, removed);
+    destClone.splice(droppableDestination.index, 0, removed)
 
-    const result = {};
-    result[droppableSource.droppableId] = sourceClone;
-    result[droppableDestination.droppableId] = destClone;
+    const result = {}
+    result[droppableSource.droppableId] = sourceClone
+    result[droppableDestination.droppableId] = destClone
 
-    return result;
-};
+    return result
+}
 
-export const objToFlatArray = (obj) => {
+export const objToFlatArray = obj => {
     let result = []
-    Object.keys(obj).forEach((key) => {
+    Object.keys(obj).forEach(key => {
         const array = obj[key]
-        result = [...result,...array]
+        result = [...result, ...array]
     })
 
     return result
 }
 
-export const formatDate = (date, formatType = "YYYY-MM-DD", currentLanguage = 'en') =>
-    date ? dayjs(date).locale(currentLanguage).format(formatType) : "-"
+export const formatDate = (
+    date,
+    formatType = 'YYYY-MM-DD',
+    currentLanguage = 'en'
+) => (date ? dayjs(date).locale(currentLanguage).format(formatType) : '-')
 
 export const dateIsInRange = (date, startDate, endDate) => {
     dayjs.extend(isBetween)
@@ -114,7 +125,5 @@ export const dateIsInRange = (date, startDate, endDate) => {
 
 export const retrieveSingleValueForRs = (options, value) => {
     if (value === null || value === '' || value === undefined) return null
-    return options.find(
-        (option) => option.value.toString() === value.toString()
-    )
+    return options.find(option => option.value.toString() === value.toString())
 }

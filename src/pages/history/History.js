@@ -92,45 +92,23 @@ const Completed = () => {
             )
 
         if (isDateChanged) {
-            //remove the task from old list
-            if (isBeforeToday(oldItem[TASK_MODEL.date])) {
-                newTasks['Expired'].filter(
-                    task => task[TASK_MODEL.id] !== updatedItem[TASK_MODEL.id]
-                )
-            } else {
-                newTasks[oldItem[TASK_MODEL.date]] = newTasks[
-                    oldItem[TASK_MODEL.date]
-                ].filter(
-                    task => task[TASK_MODEL.id] !== updatedItem[TASK_MODEL.id]
-                )
-            }
+            newTasks[oldItem[TASK_MODEL.date]] = newTasks[
+                oldItem[TASK_MODEL.date]
+            ].filter(task => task[TASK_MODEL.id] !== updatedItem[TASK_MODEL.id])
 
-            //add the task in new list
-            if (isBeforeToday(updatedItem[TASK_MODEL.date])) {
-                newTasks['Expired'].push(updatedItem)
+            if (updatedItem[TASK_MODEL.date] in newTasks) {
+                newTasks[updatedItem[TASK_MODEL.date]].push(updatedItem)
             } else {
-                if (updatedItem[TASK_MODEL.date] in newTasks) {
-                    newTasks[updatedItem[TASK_MODEL.date]].push(updatedItem)
-                } else {
-                    newTasks[updatedItem[TASK_MODEL.date]] = [updatedItem]
-                }
+                newTasks[updatedItem[TASK_MODEL.date]] = [updatedItem]
             }
         } else {
-            //update the task in the same list
-            if (isBeforeToday(updatedItem[TASK_MODEL.date])) {
-                const taskToUpdateIndex = newTasks['Expired'].findIndex(
-                    task => task[TASK_MODEL.id] === updatedItem[TASK_MODEL.id]
-                )
-                newTasks['Expired'][taskToUpdateIndex] = updatedItem
-            } else {
-                const taskToUpdateIndex = newTasks[
-                    updatedItem[TASK_MODEL.date]
-                ].findIndex(
-                    task => task[TASK_MODEL.id] === updatedItem[TASK_MODEL.id]
-                )
-                newTasks[updatedItem[TASK_MODEL.date]][taskToUpdateIndex] =
-                    updatedItem
-            }
+            const taskToUpdateIndex = newTasks[
+                updatedItem[TASK_MODEL.date]
+            ].findIndex(
+                task => task[TASK_MODEL.id] === updatedItem[TASK_MODEL.id]
+            )
+            newTasks[updatedItem[TASK_MODEL.date]][taskToUpdateIndex] =
+                updatedItem
         }
 
         setTasks({ ...newTasks })

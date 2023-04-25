@@ -7,8 +7,8 @@ import useError from '../../hooks/useError'
 import { useEffect, useMemo, useState } from 'react'
 import {
     dateIsInRange,
-    dateRenderer,
-    groupByDate,
+    historyRenderer,
+    groupHistory,
     handleApiError,
     isBeforeToday,
 } from '../../utilities/helpers'
@@ -18,6 +18,7 @@ import FilterBar from '../home/filter-bar/FilterBar'
 import { useWindowSize } from '../../hooks/useWindowSize'
 import EditTaskModal from '../home/EditTaskModal'
 import { TASK_MODEL } from '../../models'
+import dayjs from 'dayjs'
 
 const useStyles = createUseStyles(theme => ({
     taskBodyRoot: {
@@ -56,12 +57,12 @@ const Completed = () => {
 
     useEffect(() => {
         fetchTasks()
-    }, [tasks])
+    }, [])
 
     const fetchTasks = async () => {
         try {
             const { data } = await TasksAPI.getTasks()
-            setTasks(groupByDate(data.filter(el => el.is_completed)))
+            setTasks(groupHistory(data))
         } catch (error) {
             handleApiError({
                 error,
@@ -163,20 +164,22 @@ const Completed = () => {
         if (tasks) {
             Object.keys(tasks).forEach(date => {
                 const filteredDate = tasks[date].filter(t => {
-                    const isInDate = dateFilter
-                        ? dateIsInRange(
-                              t[TASK_MODEL.date],
-                              dateFilter?.[0],
-                              dateFilter?.[1]
-                          )
-                        : true
-                    const isInSearch = searchInput
-                        ? t[TASK_MODEL.description].includes(searchInput)
-                        : true
-                    const isInPriority = priority
-                        ? t[TASK_MODEL.effort] === priority.value
-                        : true
-                    return isInDate && isInSearch && isInPriority
+                    if (t.is_completed) {
+                        const isInDate = dateFilter
+                            ? dateIsInRange(
+                                  t[TASK_MODEL.date],
+                                  dateFilter?.[0],
+                                  dateFilter?.[1]
+                              )
+                            : true
+                        const isInSearch = searchInput
+                            ? t[TASK_MODEL.description].includes(searchInput)
+                            : true
+                        const isInPriority = priority
+                            ? t[TASK_MODEL.effort] === priority.value
+                            : true
+                        return isInDate && isInSearch && isInPriority
+                    }
                 })
                 if (filteredDate.length) filtered[date] = filteredDate
             })
@@ -205,7 +208,7 @@ const Completed = () => {
                                         key={date}
                                         className={classes.sectionHeading}
                                     >
-                                        {dateRenderer(date)}
+                                        {historyRenderer(date)}
                                     </div>
                                     {filteredTasks[date]?.map((task, index) => (
                                         <Task

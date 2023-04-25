@@ -48,6 +48,19 @@ export const dateRenderer = date => {
     }
 }
 
+export const historyRenderer = date => {
+    dayjs.extend(isTomorrow)
+    dayjs.extend(isToday)
+
+    if (dayjs(new Date(date)).isToday()) {
+        return 'Today'
+    } else if (dayjs(new Date(date)).isTomorrow()) {
+        return 'Tomorrow'
+    } else {
+        return dayjs(date).format('YYYY/MM/DD')
+    }
+}
+
 export const effortRenderer = effort => {
     switch (effort) {
         case 1:
@@ -73,6 +86,38 @@ export const groupByDate = array => {
         }
         return r
     }, Object.create(null))
+}
+
+// export const groupHistory = array => {
+//     return array.reduce(function (r, a) {
+//         r[a.date] = r[a.date] || []
+//         r[a.date].push(a)
+//         return r
+//     }, Object.create(null))
+// }
+
+export const groupHistory = array => {
+    const grouped = array.reduce((r, a) => {
+        const date = a.date
+        r[date] = r[date] || []
+        r[date].push(a)
+        return r
+    }, {})
+
+    // Ordina i gruppi per data in ordine decrescente
+    const sortedGroups = Object.keys(grouped).sort(
+        (a, b) => new Date(b) - new Date(a)
+    )
+
+    // Per ogni gruppo ordina ogni data in ordine decrescente
+    const sortedItems = sortedGroups.reduce((obj, key) => {
+        obj[key] = grouped[key].sort(
+            (x, y) => new Date(y.date) - new Date(x.date)
+        )
+        return obj
+    }, {})
+
+    return sortedItems
 }
 
 export const reorderItems = (list, startIndex, endIndex) => {

@@ -33,10 +33,13 @@ const useStyles = createUseStyles(theme => ({
         paddingTop: 0,
         height: `calc(${window.innerHeight}px - 284px)`,
         overflowY: 'scroll',
+        msOverflowStyle: 'none',
+        scrollbarWidth: 'none',
         paddingBottom: 40,
         [theme.mediaQueries.lUp]: {
             paddingBottom: 16,
         },
+        '&::-webkit-scrollbar': { width: 0 },
     },
     section: {
         marginBottom: theme.spacing * 3,
@@ -276,20 +279,22 @@ const Homepage = () => {
         if (tasks) {
             Object.keys(tasks).forEach(date => {
                 const filteredDate = tasks[date].filter(t => {
-                    const isInDate = dateFilter
-                        ? dateIsInRange(
-                              t[TASK_MODEL.date],
-                              dateFilter?.[0],
-                              dateFilter?.[1]
-                          )
-                        : true
-                    const isInSearch = searchInput
-                        ? t[TASK_MODEL.description].includes(searchInput)
-                        : true
-                    const isInPriority = priority
-                        ? t[TASK_MODEL.effort] === priority.value
-                        : true
-                    return isInDate && isInSearch && isInPriority
+                    if (!t.is_completed) {
+                        const isInDate = dateFilter
+                            ? dateIsInRange(
+                                  t[TASK_MODEL.date],
+                                  dateFilter?.[0],
+                                  dateFilter?.[1]
+                              )
+                            : true
+                        const isInSearch = searchInput
+                            ? t[TASK_MODEL.description].includes(searchInput)
+                            : true
+                        const isInPriority = priority
+                            ? t[TASK_MODEL.effort] === priority.value
+                            : true
+                        return isInDate && isInSearch && isInPriority
+                    }
                 })
                 if (filteredDate.length) filtered[date] = filteredDate
             })

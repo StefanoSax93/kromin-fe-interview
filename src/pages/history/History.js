@@ -4,6 +4,7 @@ import Row from '../../components/Row'
 import Column from '../../components/Column'
 import TasksAPI from '../../http/task.http'
 import useError from '../../hooks/useError'
+import Spinner from '../../components/Spinner'
 import { useEffect, useMemo, useState } from 'react'
 import {
     dateIsInRange,
@@ -18,7 +19,7 @@ import FilterBar from '../home/filter-bar/FilterBar'
 import { useWindowSize } from '../../hooks/useWindowSize'
 import EditTaskModal from '../home/EditTaskModal'
 import { TASK_MODEL } from '../../models'
-import dayjs from 'dayjs'
+import InfiniteScroll from 'react-infinite-scroll-component'
 
 const useStyles = createUseStyles(theme => ({
     taskBodyRoot: {
@@ -44,11 +45,13 @@ const useStyles = createUseStyles(theme => ({
 const Completed = () => {
     const showError = useError()
     const [searchInput, setSearchInput] = useState('')
-    const [tasks, setTasks] = useState(null)
+    const [tasks, setTasks] = useState([])
     const [dateFilter, setDateFilters] = useState('')
     const [priority, setPriority] = useState(false)
     const [openedTask, setOpenedTask] = useState(null)
     const [showEditModal, setShowEditModal] = useState(false)
+    const [page, setPage] = useState(1)
+    const [lastPage, setLastPage] = useState()
 
     const classes = useStyles()
 
@@ -56,13 +59,15 @@ const Completed = () => {
     const isMobile = width < 600
 
     useEffect(() => {
-        fetchTasks()
+        fetchTasks(page)
     }, [])
 
-    const fetchTasks = async () => {
+    const fetchTasks = async page => {
         try {
-            const { data } = await TasksAPI.getTasks()
-            setTasks(groupHistory(data))
+            const { data } = await TasksAPI.completedTasks(page)
+            setTasks(groupHistory(data.data))
+            setPage(page)
+            setLastPage(data.last_page)
         } catch (error) {
             handleApiError({
                 error,
@@ -179,8 +184,17 @@ const Completed = () => {
             <Container className={classes.taskBodyRoot}>
                 <Row>
                     <Column start={2} span={10}>
-                        {filteredTasks &&
-                            Object.keys(filteredTasks)?.map(date => (
+                        <InfiniteScroll
+                            dataLength={filteredTasks.length || []}
+                            next={() => fetchTasks(page + 1)}
+                            hasMore={page < lastPage}
+                            loader={
+                                <div style={{ textAlign: 'center' }}>
+                                    <Spinner />
+                                </div>
+                            }
+                        >
+                            {Object.keys(filteredTasks)?.map(date => (
                                 <div className={classes.section}>
                                     <div
                                         key={date}
@@ -206,6 +220,7 @@ const Completed = () => {
                                     ))}
                                 </div>
                             ))}
+                        </InfiniteScroll>
                     </Column>
                 </Row>
             </Container>

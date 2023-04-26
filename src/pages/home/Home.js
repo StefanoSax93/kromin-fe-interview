@@ -265,12 +265,17 @@ const Homepage = () => {
     }
     const onAddItem = newItem => {
         let newTasks = tasks
-        if (newItem?.date in newTasks) {
-            newTasks[newItem?.date].push(newItem)
+        if (isBeforeToday(newItem[TASK_MODEL.date])) {
+            newTasks['Expired'].push(newItem)
         } else {
-            newTasks[newItem?.date] = newTasks[newItem?.date] || []
-            newTasks[newItem?.date].push(newItem)
+            if (newItem?.date in newTasks) {
+                newTasks[newItem?.date].push(newItem)
+            } else {
+                newTasks[newItem?.date] = newTasks[newItem?.date] || []
+                newTasks[newItem?.date].push(newItem)
+            }
         }
+
         setTasks({ ...newTasks })
     }
 

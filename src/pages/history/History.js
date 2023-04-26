@@ -40,18 +40,22 @@ const useStyles = createUseStyles(theme => ({
         fontWeight: 500,
         color: theme.palette.common.textBlack,
     },
+    spinner: {
+        textAlign: 'center',
+        marginTop: 50,
+    },
 }))
 
 const Completed = () => {
     const showError = useError()
     const [searchInput, setSearchInput] = useState('')
-    const [tasks, setTasks] = useState([])
+    const [tasks, setTasks] = useState(null)
     const [dateFilter, setDateFilters] = useState('')
     const [priority, setPriority] = useState(false)
     const [openedTask, setOpenedTask] = useState(null)
     const [showEditModal, setShowEditModal] = useState(false)
     const [page, setPage] = useState(1)
-    const [lastPage, setLastPage] = useState()
+    const [hasMore, setHasMore] = useState(true)
 
     const classes = useStyles()
 
@@ -65,9 +69,18 @@ const Completed = () => {
     const fetchTasks = async page => {
         try {
             const { data } = await TasksAPI.completedTasks(page)
-            setTasks(groupHistory(data.data))
+
+            let newTasks = groupHistory(data.data)
+            if (tasks) {
+                setTasks({ ...tasks, ...newTasks })
+            } else {
+                setTasks(newTasks)
+            }
+
             setPage(page)
-            setLastPage(data.last_page)
+            if (data.current_page === data.last_page) {
+                setHasMore(false)
+            }
         } catch (error) {
             handleApiError({
                 error,
@@ -134,11 +147,9 @@ const Completed = () => {
         let newTasks = tasks
         //remember that key is => date
         //check if is Expired
-        if (isBeforeToday(key)) {
-            newTasks['Expired'].splice(index, 1)
-        } else {
-            newTasks[key].splice(index, 1)
-        }
+
+        newTasks[key].splice(index, 1)
+
         setTasks({ ...newTasks })
     }
 
@@ -187,9 +198,9 @@ const Completed = () => {
                         <InfiniteScroll
                             dataLength={filteredTasks.length || []}
                             next={() => fetchTasks(page + 1)}
-                            hasMore={page < lastPage}
+                            hasMore={hasMore}
                             loader={
-                                <div style={{ textAlign: 'center' }}>
+                                <div className={classes.spinner}>
                                     <Spinner />
                                 </div>
                             }

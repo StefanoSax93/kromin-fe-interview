@@ -54,7 +54,7 @@ const Completed = () => {
     const [priority, setPriority] = useState(false)
     const [openedTask, setOpenedTask] = useState(null)
     const [showEditModal, setShowEditModal] = useState(false)
-    const [page, setPage] = useState(1)
+    const [page, setPage] = useState(0)
     const [hasMore, setHasMore] = useState(true)
 
     const classes = useStyles()
@@ -63,7 +63,7 @@ const Completed = () => {
     const isMobile = width < 600
 
     useEffect(() => {
-        fetchTasks(page)
+        fetchTasks(1)
     }, [])
 
     const fetchTasks = async page => {
@@ -71,13 +71,11 @@ const Completed = () => {
             const { data } = await TasksAPI.completedTasks(page)
 
             let newTasks = groupHistory(data.data)
-            if (tasks) {
-                setTasks({ ...tasks, ...newTasks })
-            } else {
-                setTasks(newTasks)
-            }
+
+            setTasks({ ...tasks, ...newTasks })
 
             setPage(page)
+
             if (data.current_page === data.last_page) {
                 setHasMore(false)
             }

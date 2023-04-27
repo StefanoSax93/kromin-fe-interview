@@ -118,7 +118,7 @@ const Homepage = () => {
         if (isDateChanged) {
             //remove the task from old list
             if (isBeforeToday(oldItem[TASK_MODEL.date])) {
-                newTasks['Expired'].filter(
+                newTasks['Expired'] = newTasks['Expired'].filter(
                     task => task[TASK_MODEL.id] !== updatedItem[TASK_MODEL.id]
                 )
             } else {
@@ -414,6 +414,7 @@ const Homepage = () => {
                         setShowEditModal(false)
                     }}
                     task={openedTask}
+                    onUpdateCb={onEditTask}
                 />
             )}
             <TodoInputBar

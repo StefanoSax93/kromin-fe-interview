@@ -239,6 +239,7 @@ const Completed = () => {
                         setShowEditModal(false)
                     }}
                     task={openedTask}
+                    onUpdateCb={onEditTask}
                 />
             )}
         </>

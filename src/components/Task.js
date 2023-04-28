@@ -20,6 +20,10 @@ const useStyles = createUseStyles(theme => ({
             borderTop: 'unset',
             gridTemplateColumns: '0.1fr 1fr 0.15fr 0.15fr',
         },
+        '&.isDragging': {
+            backgroundColor: theme.palette.primary.light,
+            borderRadius: 10,
+        },
     },
     last: {
         borderBottom: `1px solid ${theme.palette.grey[400]}`,
@@ -118,6 +122,7 @@ const Task = forwardRef(
             dragHandleProps,
             draggableProps,
             isLast,
+            isDragging,
             ...props
         },
         ref
@@ -128,7 +133,9 @@ const Task = forwardRef(
 
         return (
             <div
-                className={cx(classes.task, isLast && classes.last)}
+                className={cx(classes.task, isLast && classes.last, {
+                    isDragging,
+                })}
                 ref={ref}
                 {...draggableProps}
             >
@@ -137,6 +144,7 @@ const Task = forwardRef(
                         <span className={classes.check}>
                             <Checkbox
                                 className={classes.doneCheck}
+                                checked={task?.[TASK_MODEL.completed]}
                                 onChange={() =>
                                     onUpdateCb(
                                         { ...task },
@@ -151,9 +159,20 @@ const Task = forwardRef(
                         </span>
                         <span className={classes.text} onClick={onEditCb}>
                             <p>
-                                <span>
+                                <span
+                                    style={{
+                                        color: isDragging ? 'white' : '',
+                                    }}
+                                >
                                     {task?.[TASK_MODEL.effort] && (
-                                        <span className={classes.priority}>
+                                        <span
+                                            className={classes.priority}
+                                            style={{
+                                                color: isDragging
+                                                    ? 'white'
+                                                    : '',
+                                            }}
+                                        >
                                             {' '}
                                             {effortRenderer(
                                                 task[TASK_MODEL.effort]
@@ -162,7 +181,12 @@ const Task = forwardRef(
                                     )}
                                     {task?.[TASK_MODEL.description]}
                                 </span>
-                                <span className={classes.date}>
+                                <span
+                                    className={classes.date}
+                                    style={{
+                                        color: isDragging ? 'white' : '',
+                                    }}
+                                >
                                     {' '}
                                     {dayjs(task?.[TASK_MODEL.date]).format(
                                         'DD-MM-YYYY'
@@ -175,7 +199,9 @@ const Task = forwardRef(
                             onClick={() => onDeleteCb(task, index)}
                         >
                             {' '}
-                            <DeleteIcon />{' '}
+                            <DeleteIcon
+                                fill={isDragging ? 'white' : '#889096'}
+                            />{' '}
                         </span>
                         <span {...dragHandleProps} className={classes.drag}>
                             <DragIcon />
@@ -202,28 +228,45 @@ const Task = forwardRef(
                                 }
                             />
                         </span>
-                        <span className={classes.text}>
+                        <span
+                            className={classes.text}
+                            style={{
+                                color: isDragging ? 'white' : '',
+                            }}
+                        >
                             {' '}
                             {task?.[TASK_MODEL.description]}{' '}
                         </span>
-                        <span className={classes.date}>
+                        <span
+                            className={classes.date}
+                            style={{
+                                color: isDragging ? 'white' : '',
+                            }}
+                        >
                             {' '}
                             {dayjs(task?.[TASK_MODEL.date]).format(
                                 'DD-MM-YYYY'
                             )}{' '}
                         </span>
-                        <span className={classes.priority}>
+                        <span
+                            className={classes.priority}
+                            style={{
+                                color: isDragging ? 'white' : '',
+                            }}
+                        >
                             {' '}
                             {effortRenderer(task[TASK_MODEL.effort])}
                         </span>
                         <span className={classes.edit} onClick={onEditCb}>
-                            <EditIcon />
+                            <EditIcon fill={isDragging ? 'white' : '#889096'} />
                         </span>
                         <span
                             className={classes.delete}
                             onClick={() => onDeleteCb(task, index)}
                         >
-                            <DeleteIcon />
+                            <DeleteIcon
+                                fill={isDragging ? 'white' : '#889096'}
+                            />
                         </span>
                     </>
                 )}

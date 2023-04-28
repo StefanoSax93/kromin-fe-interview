@@ -230,19 +230,19 @@ const Homepage = () => {
         }
         const sInd = source.droppableId
         const dInd = destination.droppableId
-        const newState = { ...tasks }
+        const newState = { ...filteredTasks }
 
         if (sInd === dInd) {
             newState[sInd] = reorderItems(
-                tasks[sInd],
+                filteredTasks[sInd],
                 source.index,
                 destination.index
             )
             setTasks({ ...newState })
         } else {
             const result = moveItems(
-                tasks[sInd],
-                tasks[dInd],
+                filteredTasks[sInd],
+                filteredTasks[dInd],
                 source,
                 destination
             )
@@ -394,12 +394,16 @@ const Homepage = () => {
                                                                         dragHandleProps={
                                                                             provided.dragHandleProps
                                                                         }
+                                                                        isDragging={
+                                                                            snapshot.isDragging
+                                                                        }
                                                                     />
                                                                 )}
                                                             </Draggable>
                                                         )
                                                     )}
                                                 </div>
+                                                {provided.placeholder}
                                             </div>
                                         )}
                                     </Droppable>

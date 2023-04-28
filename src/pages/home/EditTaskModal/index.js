@@ -1,70 +1,80 @@
-import {createUseStyles} from "react-jss"
-import TextArea from "../../../components/TextArea"
-import Checkbox from "../../../components/Checkbox"
-import React, {useState} from "react"
-import Popover from "../../../components/Popover"
-import {useForm, useWatch} from "react-hook-form"
-import {yupResolver} from "@hookform/resolvers/yup/dist/yup"
-import {validationSchema} from "./model"
-import dayjs from "dayjs"
-import {TASK_MODEL} from "../../../models";
-import DatePickerInput from "../../../components/DatePickerInput";
-import Select from "../../../components/Select";
-import {TASK_PRIORITIES} from "../../../models/task";
+import { createUseStyles } from 'react-jss'
+import TextArea from '../../../components/TextArea'
+import Checkbox from '../../../components/Checkbox'
+import React, { useState } from 'react'
+import Popover from '../../../components/Popover'
+import { useForm, useWatch } from 'react-hook-form'
+import { yupResolver } from '@hookform/resolvers/yup/dist/yup'
+import { validationSchema } from './model'
+import dayjs from 'dayjs'
+import { TASK_MODEL } from '../../../models'
+import DatePickerInput from '../../../components/DatePickerInput'
+import Select from '../../../components/Select'
+import { TASK_PRIORITIES } from '../../../models/task'
 
 const useStyles = createUseStyles(theme => ({
     root: {
         padding: [66, 32, 0],
-        display: "flex",
-        flexDirection: "column",
-        gap: 24
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 24,
     },
     textareaWrapper: {
-        position: "relative",
+        position: 'relative',
     },
     checkbox: {
-        position: "absolute !important",
-        width: "max-content !important",
+        position: 'absolute !important',
+        width: 'max-content !important',
         top: 0,
         left: 0,
         margin: 0,
-        zIndex: 2
+        zIndex: 2,
     },
     textarea: {
         marginLeft: 32,
 
-        "& textarea": {
+        '& textarea': {
             borderRadius: 0,
-            border: "none",
-            padding: "0 !important",
+            border: 'none',
+            padding: '0 !important',
             fontSize: 16,
             fontWeight: 500,
             color: theme.palette.common.textBlack,
-        }
+        },
     },
     buttons: {
         ...theme.utils.flexbox.spaceBetween,
-        margin: [4, 0]
-    }
+        margin: [4, 0],
+    },
 }))
 
-const EditTaskModal = ({onClose, onUpdateCb, task}) =>  {
-
+const EditTaskModal = ({ onClose, onUpdateCb, task }) => {
     const [date, setDate] = useState(task[TASK_MODEL.date])
 
     const classes = useStyles()
 
-    const onSubmit = (formValues) => {
-        onUpdateCb && onUpdateCb({...task},{
-            ...task,
-            ...formValues,
-            [TASK_MODEL.effort]: formValues[TASK_MODEL.effort].value,
-            date: dayjs(date).format("YYYY-MM-DD")
-        })
-        onClose();
+    const onSubmit = formValues => {
+        onUpdateCb &&
+            onUpdateCb(
+                { ...task },
+                {
+                    ...task,
+                    ...formValues,
+                    [TASK_MODEL.effort]: formValues[TASK_MODEL.effort].value,
+                    [TASK_MODEL.date]: dayjs(date).format('YYYY-MM-DD'),
+                }
+            )
+        onClose()
     }
 
-    const {handleSubmit, register, control, reset, setValue, formState: {errors}} = useForm({
+    const {
+        handleSubmit,
+        register,
+        control,
+        reset,
+        setValue,
+        formState: { errors },
+    } = useForm({
         shouldUnregister: false,
         mode: 'onBlur',
         reValidateMode: 'onChange',
@@ -76,35 +86,38 @@ const EditTaskModal = ({onClose, onUpdateCb, task}) =>  {
             [TASK_MODEL.description]: task[TASK_MODEL.description],
             [TASK_MODEL.date]: task[TASK_MODEL.date],
             [TASK_MODEL.effort]: +task[TASK_MODEL.effort],
-        }
+        },
     })
 
-    const description = useWatch({name: TASK_MODEL.description, control})
+    const description = useWatch({ name: TASK_MODEL.description, control })
 
     return (
         <Popover
             onClose={onClose}
             buttonPrimary={{
-                text: "Done",
+                text: 'Done',
                 disabled: !description || !date,
-                onClick: handleSubmit(onSubmit)
+                onClick: handleSubmit(onSubmit),
             }}
             buttonSecondary={{
-                text: "Cancel",
+                text: 'Cancel',
                 onClick: () => {
                     reset({
                         [TASK_MODEL.completed]: 0,
-                        [TASK_MODEL.description]: "",
+                        [TASK_MODEL.description]: '',
                         [TASK_MODEL.date]: null,
                         [TASK_MODEL.effort]: 0,
                     })
                     setDate('')
-                }
+                },
             }}
         >
             <div className={classes.root}>
                 <div className={classes.textareaWrapper}>
-                    <Checkbox className={classes.checkbox} {...register(TASK_MODEL.completed)}/>
+                    <Checkbox
+                        className={classes.checkbox}
+                        {...register(TASK_MODEL.completed)}
+                    />
                     <TextArea
                         className={classes.textarea}
                         maxLength={200}
@@ -114,10 +127,7 @@ const EditTaskModal = ({onClose, onUpdateCb, task}) =>  {
                     />
                 </div>
                 <div className={classes.buttons}>
-                    <DatePickerInput
-                        value={date}
-                        callback={setDate}
-                    />
+                    <DatePickerInput value={date} callback={setDate} />
                     <Select
                         control={control}
                         name={TASK_MODEL.effort}

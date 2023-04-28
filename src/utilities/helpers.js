@@ -88,14 +88,6 @@ export const groupByDate = array => {
     }, Object.create(null))
 }
 
-// export const groupHistory = array => {
-//     return array.reduce(function (r, a) {
-//         r[a.date] = r[a.date] || []
-//         r[a.date].push(a)
-//         return r
-//     }, Object.create(null))
-// }
-
 export const groupHistory = array => {
     const grouped = array.reduce((r, a) => {
         const date = a.date

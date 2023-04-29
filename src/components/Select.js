@@ -3,9 +3,9 @@ import { createUseStyles, useTheme } from 'react-jss'
 import { useController } from 'react-hook-form'
 import CreatableSelect from 'react-select/creatable'
 import ReactSelect from 'react-select'
-import {CrossIcon} from "../theme/icons";
+import { CrossIcon } from '../theme/icons'
 
-const useStyles = createUseStyles((theme) => ({
+const useStyles = createUseStyles(theme => ({
     root: {
         position: 'relative',
     },
@@ -44,14 +44,14 @@ const Select = ({
     })
 
     // This extend the default onChange
-    const onChangeHandler = (value) => {
+    const onChangeHandler = value => {
         if (typeof onChangeCallback === 'function') onChangeCallback(value)
         if (!isMulti || (isMulti && value.length <= maxItems)) onChange(value) // Limit multi select
     }
 
     // Label for new item creation
     const createLabel = useCallback(
-        (value) => (
+        value => (
             <span style={{ fontSize: 14 }}>
                 {addOptionMessage}
                 <span>{value}</span>
@@ -70,7 +70,7 @@ const Select = ({
             fontWeight: 400,
             fontSize: 16,
             margin: 0,
-            textAlign: 'center'
+            textAlign: 'center',
         }),
         valueContainer: (defaults, state) => ({
             ...defaults,
@@ -84,7 +84,7 @@ const Select = ({
             color: theme.palette.grey[500],
             fontWeight: 400,
             fontSize: 16,
-            textAlign: 'center'
+            textAlign: 'center',
         }),
         control: (defaults, { isDisabled, isFocused }) => ({
             ...defaults,
@@ -108,7 +108,7 @@ const Select = ({
                 minHeight: 40,
                 minWidth: 116,
                 padding: `4px 12px`,
-            }
+            },
         }),
         option: (provided, { isDisabled, isFocused, isSelected }) => ({
             ...provided,
@@ -126,7 +126,7 @@ const Select = ({
             fontSize: 16,
             borderRadius: 4,
         }),
-        indicatorsContainer: (defaults) => ({
+        indicatorsContainer: defaults => ({
             ...defaults,
             display: 'flex',
             alignItems: 'center',
@@ -137,34 +137,34 @@ const Select = ({
                 fill: theme.palette.grey[500],
             },
         }),
-        indicatorSeparator: (defaults) => ({
+        indicatorSeparator: defaults => ({
             ...defaults,
             width: 0,
             padding: 0,
         }),
-        menu: (defaults) => ({
+        menu: defaults => ({
             ...defaults,
             zIndex: 20,
             borderRadius: 10,
             overflow: 'hidden',
         }),
-        menuList: (defaults) => ({
+        menuList: defaults => ({
             ...defaults,
             padding: 0,
             margin: 8,
         }),
-        dropdownIndicator: (defaults) => ({
+        dropdownIndicator: defaults => ({
             ...defaults,
             padding: '2px',
         }),
-        clearIndicator: (defaults) => ({
+        clearIndicator: defaults => ({
             ...defaults,
             borderRadius: '50px',
             marginRight: 4,
             padding: 0,
             backgroundColor: 'transparent',
         }),
-        multiValueLabel: (defaults) => ({
+        multiValueLabel: defaults => ({
             ...defaults,
             textTransform: isCreatable ? 'uppercase' : 'none',
             padding: 0,
@@ -233,21 +233,23 @@ const Select = ({
     )
 }
 
-const ClearIndicator = (props) => {
+const ClearIndicator = props => {
     const {
-        children = <CrossIcon width={8} height={8}/>,
+        children = <CrossIcon width={8} height={8} />,
         getStyles,
         innerProps: { ref, ...restInnerProps },
-    } = props;
+    } = props
     return (
         <div
             {...restInnerProps}
             ref={ref}
-            style={{...getStyles('clearIndicator', props)}}
+            style={{ ...getStyles('clearIndicator', props) }}
         >
-            <div style={{ padding: '0px 5px', display: 'flex' }}>{children}</div>
+            <div style={{ padding: '0px 5px', display: 'flex' }}>
+                {children}
+            </div>
         </div>
-    );
-};
+    )
+}
 
 export default Select

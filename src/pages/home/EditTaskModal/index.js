@@ -60,7 +60,7 @@ const EditTaskModal = ({ onClose, onUpdateCb, task }) => {
                 {
                     ...task,
                     ...formValues,
-                    [TASK_MODEL.effort]: formValues[TASK_MODEL.effort].value,
+                    [TASK_MODEL.effort]: formValues[TASK_MODEL.effort],
                     [TASK_MODEL.date]: dayjs(date).format('YYYY-MM-DD'),
                 }
             )
@@ -131,10 +131,14 @@ const EditTaskModal = ({ onClose, onUpdateCb, task }) => {
                     <Select
                         control={control}
                         name={TASK_MODEL.effort}
+                        value={TASK_MODEL.effort}
                         placeholder={'Effort'}
                         isClearable
                         menuPlacement={'top'}
                         options={TASK_PRIORITIES}
+                        onChange={selectedOption =>
+                            setValue(TASK_MODEL.effort, selectedOption.value)
+                        }
                     />
                 </div>
             </div>

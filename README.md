@@ -1,14 +1,23 @@
 # Todos Front-end repo
+
 Repo for the React front-end of Todos app project.
 
-- Copy `.example.env.development` file
-- Rename it `.env`
-- Run `yarn install`
-- Run `yarn start`
+-   Copy `.example.env.development` file
+-   Rename it `.env`
+-   Run `yarn install`
+-   Run `yarn start`
 
 ### Build the Front-end repo
+
 Steps for build the front-end app.
 
-- Run `yarn build`
-- The `.\build` folder is ready to be deployed.
-- If you want to run it with a static server `serve -s build`
+-   Run `yarn build`
+-   The `.\build` folder is ready to be deployed.
+-   If you want to run it with a static server `serve -s build`
+
+### react-infinite-scroll-component
+
+Ho aggiunto la libreria react-infinite-scroll-component per
+creare l'effetto dello scroll infinito al caricamento dei
+task completati, in quanto mi è sembrata molto semplice e
+comoda
